@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -7,6 +8,44 @@ namespace Sample05
 {
     class Program
     {
+        /// <summary>
+        /// 泛型类
+        /// </summary>
+        /// <param name="args"></param>
+        public class TestClass<T>
+        {
+            //定义一个长度为5的泛型类型的数组
+            T[] obj = new T[5];
+            int count = 0;
+            //向泛型类型添加数据
+            public void Add(T item)
+            {
+                if (count + 1 < 6)
+                {
+                    obj[count] = item;
+                }
+                count++;
+            }
+            //foreach语句迭代索引
+            public T this[int index]
+            {
+                get { return obj[index]; }
+                set { obj[index] = value; }
+            }
+        }
+        /// <summary>
+        /// 泛型方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        static void Swap<T>(ref T a, ref T b)
+        {
+            T temp;
+            temp = a;
+            a = b;
+            b = temp;
+        }
         static void Main(string[] args)
         {
             //test_insert();
@@ -17,7 +56,65 @@ namespace Sample05
             //test_mult_update();
             //test_select_one();
             //test_select_list();
-            test_select_content_with_comment();
+            //test_select_content_with_comment();
+            //用整型来实例化泛型类
+            //TestClass<int> intobj = new TestClass<int>();
+            ////向集合中添加int数据
+            //intobj.Add(1);
+            //intobj.Add(2);
+            //intobj.Add(3);         //没有装箱
+            //intobj.Add(4);
+            //intobj.Add(5);
+            //intobj.Add(6);
+            ////遍历显示数据
+            //for (int i = 0; i < 5; i++)
+            //{
+            //    Console.WriteLine(intobj[i]);//没有拆箱
+            //}
+            //int a = 40, b = 60;
+            //Console.WriteLine("Bofore swap: {0},{1}",a,b);
+            //Swap<int>(ref a, ref b);
+            //Console.WriteLine("After swap:{0},{1}",a,b);
+            //Dictionary<int, string> dobj = new Dictionary<int, string>(5);
+            //dobj.Add(1,"Tom");
+            //dobj.Add(2, "John");
+            //dobj.Add(3, "Maria");
+            //dobj.Add(4, "Max");
+            //dobj.Add(5, "Ram");
+            //for (int i = 1; i < dobj.Count; i++)
+            //{
+            //    Console.WriteLine(dobj[i]);
+            //}
+            ////定义一个字典集合
+            //Dictionary<string, emp> dobj = new Dictionary<string, emp>(2);
+            ////向字典中添加元素
+            //emp tom = new emp("tom",2000);
+            //dobj.Add("tom",tom);
+            //emp john = new emp("john",4000);
+            //dobj.Add("john", john);
+            //foreach (object str in dobj.Values)
+            //{
+            //    Console.WriteLine(str);
+            //}
+            //Queue qObj = new Queue();
+            //qObj.Enqueue("Tom");
+            //qObj.Enqueue("Harry");
+            //qObj.Enqueue("Maria");
+            //qObj.Enqueue("john");
+            //while (qObj.Count!=0)
+            //{
+            //    Console.WriteLine(qObj.Dequeue());
+            //}
+            //
+            int[] iArray = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            //定义一个堆栈
+            Stack stack = new Stack(iArray);
+            Console.WriteLine("Total items=" + stack.Count);
+            //显示集合数据
+            for (int i = 0; i < stack.Count; ++i)
+            {
+                Console.WriteLine(stack.Pop());
+            }
             Console.ReadKey();
         }
         /// <summary>
@@ -180,9 +277,9 @@ WHERE   (id = @id)";
                 {
                     var content = result.ReadFirstOrDefault<ContentWithComment>();
                     content.comments = result.Read<Comment>();
-                    
+
                     Console.WriteLine($"test_select_content_with_comment:内容5的评论数量{content.comments.Count()}");
-                    
+
                 }
             }
         }
